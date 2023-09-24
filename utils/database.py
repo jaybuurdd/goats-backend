@@ -12,8 +12,6 @@ sql alchemy and manage sessions (REMEMBER TO CLOSE SESSIONS WHEN OPENING THEM).
 We also instantiated our declaritive base that we'll utilize in our models
 when creating and replicating tables in our database.
 '''
-Base = declarative_base()
-
 class DatabaseConfig:
     """
     Configuration class for the database. Allows connection setup and session management.

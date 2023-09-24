@@ -269,5 +269,3 @@ class TxHistory(Base):
     people = relationship('Ledger', primaryjoin='TxHistory.people_id == Ledger.people_id')
     tokens = relationship('Ledger', primaryjoin='TxHistory.tokens_id == Ledger.tokens_id')
     ledger = relationship('Ledger', primaryjoin='TxHistory.wallet == Ledger.wallet')
-
-#mariadb+mariadbconnector://u353150131_jasmine:XxSsWw%402ZzAaQq%211@31.220.104.197/u353150131_DAO_DEV
