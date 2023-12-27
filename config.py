@@ -17,8 +17,7 @@ class ProductionConfig(Config):
     DEBUG = False
 
 def get_config():
-    env = os.getenv("APP_MODE", "DEVELOPMENT").upper()
-    if env == "DEVELOPMENT":
+    if (env := os.getenv("APP_MODE", "DEVELOPMENT").upper()) == "DEVELOPMENT":
         return DevelopmentConfig
     elif env == "PRODUCTION":
         return ProductionConfig
