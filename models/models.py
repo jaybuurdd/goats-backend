@@ -3,7 +3,7 @@
  Need to check that everything was mapped correctly before distributing models 
  to their own files.
  '''
-from sqlalchemy import CHAR, Column, DateTime, Float, ForeignKey, Index, LargeBinary, String, Table, Text, text
+from sqlalchemy import CHAR, Column, Integer, DateTime, Float, ForeignKey, Index, LargeBinary, String, Table, Text, text
 from sqlalchemy.dialects.mysql import INTEGER, TINYINT
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -29,10 +29,10 @@ class Person(Base):
     phone = Column(String(20))
     role = Column(String(20))
     pfp = Column(LargeBinary)
-    premium_commision = Column(TINYINT(2), nullable=False, server_default=text("0"), comment='0 = no premium, 1 = premium (input affiliate_commisions record)')
+    premium_commission = Column(TINYINT(2), nullable=False, server_default=text("0"), comment='0 = no premium, 1 = premium (input affiliate_commisions record)')
     notes = Column(Text)
 
-    roless = relationship('Role', secondary='people_roles')
+    roles = relationship('Role', secondary='people_roles')
 
 
 class Product(Base):
@@ -269,3 +269,11 @@ class TxHistory(Base):
     people = relationship('Ledger', primaryjoin='TxHistory.people_id == Ledger.people_id')
     tokens = relationship('Ledger', primaryjoin='TxHistory.tokens_id == Ledger.tokens_id')
     ledger = relationship('Ledger', primaryjoin='TxHistory.wallet == Ledger.wallet')
+
+
+class GoatsByWallet(Base):
+    __tablename__ = 'GOATS_by_wallet'
+
+    wallet = Column(String, primary_key=True)
+    GOAT_ids = Column(String)
+    quantity = Column(Integer)

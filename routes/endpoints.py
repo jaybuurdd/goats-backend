@@ -1,0 +1,29 @@
+import os
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from utils.logging import logger
+from routes.users import router as user_router
+from routes.wallets import router as wallet_router
+
+
+def register_endpoints():
+    logger.info("Starting API endpoints registration")
+    api = FastAPI()
+
+    origins = [
+        os.getenv('ORIGIN')
+    ]
+
+    api.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    api.include_router(user_router, prefix="/api/v1/user", tags=["users"])
+    api.include_router(wallet_router, prefix="/api/v1/wallet", tags=["wallets"])
+    logger.info("Ending API endpoints registration")
+    return api

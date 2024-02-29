@@ -1,11 +1,11 @@
-from typing import Union
-from fastapi import FastAPI
-from utils.database import config_db
-from utils.logging import config_logging
+import os
+
+from utils.logging import config_logging, logger
 from config import get_config
+from routes.endpoints import register_endpoints
 
 CONFIG = get_config()
-api = FastAPI()
 config_logging(CONFIG)
-db = config_db(CONFIG)
+api = register_endpoints() 
+logger.info(f"GOATS DAO Server configuration complete, currently running in {os.getenv('APP_MODE')}")
 
