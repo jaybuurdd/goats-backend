@@ -11,11 +11,11 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     # DBMaria config
-    DB_URL = f"mariadb+mariadbconnector://{os.getenv('DB_USERNAME')}:{quote(os.getenv('DB_PASSWORD'))}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
+    DB_URL = f"mysql+mysqlconnector://{os.getenv('DB_USERNAME')}:{quote(os.getenv('DB_PASSWORD'))}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
     
 class ProductionConfig(Config):
     DEBUG = False
-    DB_URL = f"mariadb+mariadbconnector://{os.getenv('DB_USERNAME')}:{quote(os.getenv('DB_PASSWORD'))}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
+    DB_URL = f"mysql+mysqlconnector://{os.getenv('DB_USERNAME')}:{quote(os.getenv('DB_PASSWORD'))}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
 
 def get_config():
     env = os.getenv("APP_MODE", "DEVELOPMENT").upper()
