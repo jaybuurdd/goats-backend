@@ -15,6 +15,7 @@ class DevelopmentConfig(Config):
     
 class ProductionConfig(Config):
     DEBUG = False
+    DB_URL = f"mariadb+mariadbconnector://{os.getenv('DB_USERNAME')}:{quote(os.getenv('DB_PASSWORD'))}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
 
 def get_config():
     env = os.getenv("APP_MODE", "DEVELOPMENT").upper()
