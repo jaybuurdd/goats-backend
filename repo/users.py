@@ -26,8 +26,8 @@ class UserRepo:
                     logger.info("\nSigning up a new user\n")
                     #TODO: save new user into db
                     person = Person(
-                        first_name=user_info['first_name'],
-                        last_name=user_info['last_name'],
+                        first_name=user_info['given_name'],
+                        last_name=user_info['family_name'],
                         email=user_info['email'],
                         role='User'
                     )
