@@ -30,7 +30,7 @@ class Person(Base):
     role = Column(String(20))
     pfp = Column(LargeBinary)
     # premium_commission = Column(TINYINT(2), nullable=False, server_default=text("0"), comment='0 = no premium, 1 = premium (input affiliate_commisions record)')
-    notes = Column(Text)
+    #notes = Column(Text)
 
     roles = relationship('Role', secondary='people_roles')
 
