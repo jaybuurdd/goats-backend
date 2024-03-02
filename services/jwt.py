@@ -54,6 +54,7 @@ def create_jwt_session(user_data, secret_key):
     }
 
     token = jwt.encode(payload, secret_key, algorithm="HS256")
+    logger.info(f"token created: {token}")
 
     return token
 
