@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from utils.logging import logger
 from routes.users import router as user_router
 from routes.wallets import router as wallet_router
+from routes.server import router as server_router
 
 
 def register_endpoints():
@@ -25,5 +26,6 @@ def register_endpoints():
 
     api.include_router(user_router, prefix="/api/v1/user", tags=["users"])
     api.include_router(wallet_router, prefix="/api/v1/wallet", tags=["wallets"])
+    api.include_router(server_router, prefix="/api/v1/server", tags=["servers"])
     logger.info("Ending API endpoints registration")
     return api
