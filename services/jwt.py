@@ -64,6 +64,7 @@ class JWTBearer(HTTPBearer):
 
     async def __call__(self, request: Request):
         credentials: str = request.cookies.get(self.token_cookie)
+        logger.info(f"jwt credentials check: {credentials}")
         if credentials:
             if not self.verify_jwt(credentials):
                 logger.error("The provided token was invalid or expired")
