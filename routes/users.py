@@ -32,7 +32,7 @@ async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
 
     # set create jwt token in an http only cookie
     #NOTE: set secure to true in prod
-    response.set_cookie(key="jwt_token", value=token, httponly=True, secure=True)  #NOTE: secure=False for local testing
+    response.set_cookie(key="jwt_token", value=token, httponly=True, samesite='None', secure=True)  #NOTE: secure=False for local testing
 
     return user
 
