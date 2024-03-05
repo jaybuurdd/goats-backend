@@ -17,9 +17,9 @@ Used to verify google related JWT signature with Google public keys
 """
 async def get_google_keys():
     # get google public keys
-    discovery = requests.get(GOOGLE_DISCOVERY_URL).json()
+    discovery = requests.get(GOOGLE_DISCOVERY_URL, timeout=60).json()
     jwks_uri = discovery['jwks_uri']
-    jwks = requests.get(jwks_uri).json()
+    jwks = requests.get(jwks_uri, timeout=60).json()
 
     return {jwk["kid"]: jwk for jwk in jwks["keys"]}
 
