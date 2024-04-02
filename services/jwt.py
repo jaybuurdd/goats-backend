@@ -3,12 +3,12 @@ import jwt
 import datetime
 import requests
 from fastapi import HTTPException, Request
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPBearer
 from jose import jwt, jwk, JWTError, ExpiredSignatureError
 from jose.utils import base64url_decode
-from typing import Optional
 
 from utils.logging import logger
+from security import safe_requests
 
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 
@@ -19,7 +19,7 @@ async def get_google_keys():
     # get google public keys
     discovery = requests.get(GOOGLE_DISCOVERY_URL).json()
     jwks_uri = discovery['jwks_uri']
-    jwks = requests.get(jwks_uri).json()
+    jwks = safe_requests.get(jwks_uri).json()
 
     return {jwk["kid"]: jwk for jwk in jwks["keys"]}
 
