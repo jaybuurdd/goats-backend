@@ -1,4 +1,4 @@
-from models.models import Person, Wallet, Address
+from models.models import Person, Wallet, Address, SocialMedia
 from schemas.users import Account
 from utils.logging import logger
 
@@ -60,19 +60,8 @@ class UserRepo:
             # check if person exists already
             person = db.query(Person).filter(Person.email == user_data['email']).first()
             
-            # if doesn't exist
-            # if not person:
-            #     # add new user
-            #     person = Person(
-            #         first_name=user_data['first_name'],
-            #         last_name=user_data['last_name'],
-            #         email=user_data['email'],
-            #         role='User'
-            #     )
-            #     db.add(person)
-            #     db.commit()
-            #     db.refresh(person) # refresh to get new person id
             if person:
+                person.phone = user_data['phone']
                 wallet = db.query(Wallet).filter(Wallet.wallet == user_data['wallet']).first()
                 # if wallet exists
                 if wallet: 
@@ -94,9 +83,18 @@ class UserRepo:
                     address_type='Home',
                     country='USA'
                 )
-
                 db.add(address)
 
+                # if any social media accounts provided
+                if user_data['socials']:
+                    for social in user_data['socials']:
+                        new_social = SocialMedia(
+                            URL=social['url'],
+                            app_name=social['platform'],
+                            user_name=social['username'],
+                            people_id=person.id      
+                        )
+                        db.add(new_social)
         
                 db.commit()
                 return
