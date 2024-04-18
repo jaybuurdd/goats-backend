@@ -38,7 +38,7 @@ async def decode_google_jwt(token: str):
             raise JWTError("Signature verification failed")
         
         claims = jwt.get_unverified_claims(token)
-        logger.info(f"JWT Decode Complete")
+        logger.info("JWT Decode Complete")
         return claims
     except KeyError:
         raise HTTPException(status_code=400, detail="Invalid JWT")
