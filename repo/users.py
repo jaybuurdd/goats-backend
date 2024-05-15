@@ -19,6 +19,7 @@ class UserRepo:
                 email=user.email,
                 first_name=user.first_name,
                 last_name=user.last_name,
+                phone=user.phone if user.phone else None,
                 wallet=wallet.wallet if wallet else None
             )
             else:
@@ -56,10 +57,11 @@ class UserRepo:
     @classmethod
     def reigster_user(cls, user_data: dict, db):
         try:
-            logger.info("Registering users info")
+            logger.info("Registering users info...")
             # check if person exists already
             person = db.query(Person).filter(Person.email == user_data['email']).first()
             
+            logger.info("Checking personal info...")
             if person:
                 person.phone = user_data['phone']
                 wallet = db.query(Wallet).filter(Wallet.wallet == user_data['wallet']).first()
@@ -73,18 +75,22 @@ class UserRepo:
                         type='HUMAN'
                     )    
                     db.add(new_wallet)
+                
+                logger.info("Checking address data...")
+                address_fields = ['city', 'state', 'posta_code', 'country']
+                if any(user_data.get(field) for field in address_fields):
+                    address = Address(
+                        people_id=person.id,
+                        address1=user_data['address'],
+                        city=user_data['city'],
+                        state=user_data['state'],
+                        postal_code=user_data['postal_code'],
+                        address_type='Home',
+                        country=user_data['country']
+                    )
+                    db.add(address)
 
-                address = Address(
-                    people_id=person.id,
-                    address1=user_data['address'],
-                    city=user_data['city'],
-                    state=user_data['state'],
-                    postal_code=user_data['postal_code'],
-                    address_type='Home',
-                    country='USA'
-                )
-                db.add(address)
-
+                logger.info("Checking socials data...")
                 # if any social media accounts provided
                 if user_data['socials']:
                     for social in user_data['socials']:
@@ -97,6 +103,7 @@ class UserRepo:
                         db.add(new_social)
         
                 db.commit()
+                logger.info("Registering completed successfully!")
                 return
          
         except Exception as e:
