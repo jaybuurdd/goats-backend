@@ -15,7 +15,7 @@ router = APIRouter()
 
 @router.post("/auth")
 async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
-    logger.info("User Google Sign-in Process Started: data = ", data)
+    logger.info("User Google Sign-in Process Started: data = ", data.get('data', {}).get('credential'))
     credential = data.get('data', {}).get('credential')
 
     if not credential or data.get('type') != 'google':
@@ -36,7 +36,7 @@ async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
     #NOTE: set secure to true in prod
     response.set_cookie(key="jwt_token", value=token, httponly=True, samesite='None', secure=True)  #NOTE: secure=False for local testing
 
-    logger.ingo(f"End of Google Sign-in: data = {data} | token = {token}")
+    logger.info(f"End of Google Sign-in: data = {data} | token = {token}")
     return user
 
 @router.post("/register", dependencies=[Depends(JWTBearer())])
