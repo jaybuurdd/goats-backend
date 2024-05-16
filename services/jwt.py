@@ -1,5 +1,6 @@
 import os
 import jwt
+import httpx
 import datetime
 import requests
 from fastapi import HTTPException, Request
@@ -62,19 +63,26 @@ class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
         super(JWTBearer, self).__init__(auto_error=auto_error)
         self.token_cookie = 'jwt_token'
+        self.httpx_client = httpx.Client()
 
     async def __call__(self, request: Request):
         credentials: str = request.cookies.get(self.token_cookie)
         logger.info(f"jwt credentials check: {credentials}")
         if credentials:
-            if not self.verify_jwt(credentials):
+            # Store the JWT token securely
+            self.httpx_client.cookies.set(self.token_cookie, credentials)
+
+            # Retrieve the JWT token
+            jwt_token = self.httpx_client.cookies.get(self.token_cookie)
+
+            if not self.verify_jwt(jwt_token):
                 logger.error("The provided token was invalid or expired")
                 raise HTTPException(status_code=401, detail="Invalid token or expired token.")
             return True
         else:
             logger.error("The provided authorization code is invalid: ")
             raise HTTPException(status_code=401, detail="Invalid authorization code.")
-        
+
     def verify_jwt(self, jwtoken: str) -> bool:
         try:
             jwt.decode(jwtoken, os.getenv('JWT_SECRET_KEY'), algorithms=["HS256"])
@@ -85,3 +93,31 @@ class JWTBearer(HTTPBearer):
         except JWTError as e:
             logger.error(f"JWT token verification failed: {e}")
             return False
+        
+# class JWTBearer(HTTPBearer):
+#     def __init__(self, auto_error: bool = True):
+#         super(JWTBearer, self).__init__(auto_error=auto_error)
+#         self.token_cookie = 'jwt_token'
+
+#     async def __call__(self, request: Request):
+#         credentials: str = request.cookies.get(self.token_cookie)
+#         logger.info(f"jwt credentials check: {credentials}")
+#         if credentials:
+#             if not self.verify_jwt(credentials):
+#                 logger.error("The provided token was invalid or expired")
+#                 raise HTTPException(status_code=401, detail="Invalid token or expired token.")
+#             return True
+#         else:
+#             logger.error("The provided authorization code is invalid: ")
+#             raise HTTPException(status_code=401, detail="Invalid authorization code.")
+        
+#     def verify_jwt(self, jwtoken: str) -> bool:
+#         try:
+#             jwt.decode(jwtoken, os.getenv('JWT_SECRET_KEY'), algorithms=["HS256"])
+#             return True
+#         except ExpiredSignatureError:
+#             logger.error("Token has expired")
+#             return False
+#         except JWTError as e:
+#             logger.error(f"JWT token verification failed: {e}")
+#             return False
