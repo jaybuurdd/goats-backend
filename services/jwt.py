@@ -1,6 +1,5 @@
 import os
 import jwt
-import keyring
 import datetime
 import requests
 from fastapi import HTTPException, Request
