@@ -1,5 +1,6 @@
 import os
-from fastapi import Depends, APIRouter, HTTPException, Response
+import json
+from fastapi import Depends, APIRouter, HTTPException, Response, status
 from sqlalchemy.orm import Session
 
 from schemas.users import RegisterRequest
@@ -43,7 +44,19 @@ async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
 
     logger.info(f"Set-Cookie header: {response.headers.get('set-cookie')}")
     logger.info(f"JWT token set: {token}")
-    return user
+
+    response_content = {
+        "message": "Authentication Successful",
+        "data": user
+    }
+
+    return Response(
+        content=json.dumps(response_content),
+        media_type="application/json",
+        status_code=status.HTTP_200_OK,
+        headers={"Set-Cookie": response.headers.get('set-cookie')}
+    )
+    #return user
 
 @router.post("/register", dependencies=[Depends(JWTBearer())])
 async def register_user(user : dict, db: Session = Depends(get_db)):
