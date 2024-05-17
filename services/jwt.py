@@ -6,7 +6,7 @@ from fastapi import HTTPException, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, jwk, JWTError, ExpiredSignatureError
 from jose.utils import base64url_decode
-
+from typing import Optional
 from utils.logging import logger
 
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
@@ -64,7 +64,11 @@ class JWTBearer(HTTPBearer):
         self.token_cookie = 'jwt_token'
 
     async def __call__(self, request: Request):
-        credentials: str = request.cookies.get(self.token_cookie)
+        # Log the request headers and cookies
+        logger.info(f"Request headers: {request.headers}")
+        logger.info(f"Request cookies: {request.cookies}")
+
+        credentials: Optional[str] = request.cookies.get(self.token_cookie)
         logger.info(f"jwt credentials check: {credentials}")
         if credentials:
             if not self.verify_jwt(credentials):

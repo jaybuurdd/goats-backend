@@ -7,7 +7,6 @@ from repo.users import UserRepo
 from services.jwt import decode_google_jwt as decode, \
 create_jwt_session as new_session, JWTBearer
 from utils.database import get_db
-from utils.logging import logger
 
 
 router = APIRouter()
@@ -15,7 +14,6 @@ router = APIRouter()
 
 @router.post("/auth")
 async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
-    logger.info("User Google Sign-in Process Started: data = ", data.get('data', {}).get('credential'))
     credential = data.get('data', {}).get('credential')
 
     if not credential or data.get('type') != 'google':
@@ -34,9 +32,14 @@ async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
 
     # set create jwt token in an http only cookie
     #NOTE: set secure to true in prod
-    response.set_cookie(key="jwt_token", value=token, httponly=True, samesite='None', secure=True)  #NOTE: secure=False for local testing
-
-    logger.info(f"End of Google Sign-in: data = {data} | token = {token}")
+    response.set_cookie(
+        key="jwt_token", 
+        value=token, 
+        httponly=True, 
+        samesite='None', 
+        secure=False if os.getenv("APP_MODE", "DEVELOPMENT").upper() == 'DEVELOPMENT' else True  #NOTE: secure=False for local testing
+    )
+    
     return user
 
 @router.post("/register", dependencies=[Depends(JWTBearer())])
