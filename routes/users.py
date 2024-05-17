@@ -1,7 +1,9 @@
 import os
 import json
-from fastapi import Depends, APIRouter, HTTPException, Response, status
 from sqlalchemy.orm import Session
+from fastapi.encoders import jsonable_encoder
+from fastapi import Depends, APIRouter, HTTPException, Response, status
+
 
 from schemas.users import RegisterRequest
 from repo.users import UserRepo
@@ -45,13 +47,15 @@ async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
     logger.info(f"Set-Cookie header: {response.headers.get('set-cookie')}")
     logger.info(f"JWT token set: {token}")
 
-    # response_content = {
-    #     "message": "Authentication Successful",
-    #     "data": user
-    # }
+     # Serialize the user object to JSON
+    user_data = jsonable_encoder(user)
 
+    response_content = {
+        "message": "Authentication successful",
+        "data": user_data
+    }
     return Response(
-        content=user,
+        content=json.dumps(response_content),
         media_type="application/json",
         status_code=status.HTTP_200_OK,
         headers={"Set-Cookie": response.headers.get('set-cookie')}
