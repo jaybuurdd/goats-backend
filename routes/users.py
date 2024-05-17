@@ -7,7 +7,7 @@ from repo.users import UserRepo
 from services.jwt import decode_google_jwt as decode, \
 create_jwt_session as new_session, JWTBearer
 from utils.database import get_db
-
+from utils.logging import logger
 
 router = APIRouter()
 # TODO: add request and response models
@@ -37,9 +37,12 @@ async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
         value=token, 
         httponly=True, 
         samesite='None', 
-        secure=False if os.getenv("APP_MODE", "DEVELOPMENT").upper() == 'DEVELOPMENT' else True  #NOTE: secure=False for local testing
+        secure=False if os.getenv("APP_MODE", "DEVELOPMENT").upper() == 'DEVELOPMENT' else True,  #NOTE: secure=False for local testing
+        path='/'
     )
-    
+
+    logger.info(f"Set-Cookie header: {response.headers.get('set-cookie')}")
+    logger.info(f"JWT token set: {token}")
     return user
 
 @router.post("/register", dependencies=[Depends(JWTBearer())])
