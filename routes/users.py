@@ -50,12 +50,8 @@ async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
      # Serialize the user object to JSON
     user_data = jsonable_encoder(user)
 
-    response_content = {
-        "message": "Authentication successful",
-        "data": user_data
-    }
     return Response(
-        content=json.dumps(response_content),
+        content=json.dumps(user_data),
         media_type="application/json",
         status_code=status.HTTP_200_OK,
         headers={"Set-Cookie": response.headers.get('set-cookie')}
