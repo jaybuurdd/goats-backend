@@ -51,7 +51,7 @@ async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
     # }
 
     return Response(
-        content=data,
+        content=user,
         media_type="application/json",
         status_code=status.HTTP_200_OK,
         headers={"Set-Cookie": response.headers.get('set-cookie')}
