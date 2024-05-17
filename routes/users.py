@@ -45,13 +45,13 @@ async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
     logger.info(f"Set-Cookie header: {response.headers.get('set-cookie')}")
     logger.info(f"JWT token set: {token}")
 
-    response_content = {
-        "message": "Authentication Successful",
-        "data": user
-    }
+    # response_content = {
+    #     "message": "Authentication Successful",
+    #     "data": user
+    # }
 
     return Response(
-        content=json.dumps(response_content),
+        content=data,
         media_type="application/json",
         status_code=status.HTTP_200_OK,
         headers={"Set-Cookie": response.headers.get('set-cookie')}
