@@ -1,7 +1,8 @@
 import os
 import jwt
-import datetime
+# import datetime
 import requests
+from datetime import datetime, timezone, timedelta
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, jwk, JWTError, ExpiredSignatureError
@@ -46,7 +47,7 @@ async def decode_google_jwt(token: str):
         raise HTTPException(status_code=400, detail=f"JWT Error: {e}")
 
 def create_jwt_session(user_data, secret_key):
-    expiration = datetime.datetime.utcnow() + datetime.timedelta(hours=int(os.getenv('JWT_EXPIRES')))
+    expiration = datetime.datetime(timezone.utc) + timedelta(hours=int(os.getenv('JWT_EXPIRES')))
 
     payload = {
         "sub": str(user_data['sub']),
