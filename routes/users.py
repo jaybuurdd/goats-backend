@@ -1,13 +1,16 @@
 import os
-from fastapi import Depends, APIRouter, HTTPException, Response
+import json
 from sqlalchemy.orm import Session
+from fastapi.encoders import jsonable_encoder
+from fastapi import Depends, APIRouter, HTTPException, Response, status
+
 
 from schemas.users import RegisterRequest
 from repo.users import UserRepo
 from services.jwt import decode_google_jwt as decode, \
 create_jwt_session as new_session, JWTBearer
 from utils.database import get_db
-
+from utils.logging import logger
 
 router = APIRouter()
 # TODO: add request and response models
@@ -32,9 +35,28 @@ async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
 
     # set create jwt token in an http only cookie
     #NOTE: set secure to true in prod
-    response.set_cookie(key="jwt_token", value=token, httponly=True, samesite='None', secure=True)  #NOTE: secure=False for local testing
+    response.set_cookie(
+        key="jwt_token", 
+        value=token, 
+        httponly=True, 
+        samesite='None', 
+        secure=False if os.getenv("APP_MODE", "DEVELOPMENT").upper() == 'DEVELOPMENT' else True,  #NOTE: secure=False for local testing
+        path='/'
+    )
 
-    return user
+    logger.info(f"Set-Cookie header: {response.headers.get('set-cookie')}")
+    logger.info(f"JWT token set: {token}")
+
+     # Serialize the user object to JSON
+    user_data = jsonable_encoder(user)
+
+    return Response(
+        content=json.dumps(user_data),
+        media_type="application/json",
+        status_code=status.HTTP_200_OK,
+        headers={"Set-Cookie": response.headers.get('set-cookie')}
+    )
+    #return user
 
 @router.post("/register", dependencies=[Depends(JWTBearer())])
 async def register_user(user : dict, db: Session = Depends(get_db)):

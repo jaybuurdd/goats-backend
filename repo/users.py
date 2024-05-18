@@ -6,7 +6,7 @@ from utils.logging import logger
 class UserRepo:
     @classmethod
     def access_google_auth(cls, user_info, db):
-        logger.info("\nValidating user decoded Google Sign-in data\n")
+        logger.info("Validating user decoded Google Sign-in data\n")
         account = None
         try:
             user = db.query(Person).filter(Person.email == user_info['email']).first()
