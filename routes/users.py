@@ -40,8 +40,8 @@ async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
         value=token, 
         httponly=True, 
         samesite='None', 
-        secure=False if os.getenv("APP_MODE", "DEVELOPMENT").upper() == 'DEVELOPMENT' else True,  #NOTE: secure=False for local testing
-        domain="api-goatsdao.onrender.com",
+        secure=False, # if os.getenv("APP_MODE", "DEVELOPMENT").upper() == 'DEVELOPMENT' else True,  #NOTE: secure=False for local testing
+        # domain="api-goatsdao.onrender.com",
         path='/'
     )
 
