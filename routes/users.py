@@ -41,7 +41,7 @@ async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
         httponly=True, 
         samesite='None', 
         secure=True,  #NOTE: secure=False for local testing
-        # domain="api-goatsdao.onrender.com",
+        # domain=".goatsdao.com",
         path='/'
     )
 

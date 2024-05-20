@@ -14,7 +14,6 @@ def register_endpoints():
 
     origins = [
         'https://goatsdao.com',
-        'https://api-goatsdao.onrender.com'
     ]
 
     api.add_middleware(
