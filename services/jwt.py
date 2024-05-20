@@ -1,8 +1,13 @@
 import os
 import jwt
+<<<<<<< Updated upstream
 # import datetime
 import requests
 from datetime import datetime, timezone, timedelta
+=======
+import requests
+from datetime import datetime, timedelta, timezone
+>>>>>>> Stashed changes
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, jwk, JWTError, ExpiredSignatureError
@@ -46,7 +51,11 @@ async def decode_google_jwt(token: str):
         raise HTTPException(status_code=400, detail=f"JWT Error: {e}")
 
 def create_jwt_session(user_data, secret_key):
+<<<<<<< Updated upstream
     expiration = datetime.datetime(timezone.utc) + timedelta(hours=int(os.getenv('JWT_EXPIRES')))
+=======
+    expiration = datetime.now(timezone.utc) + timedelta(hours=int(os.getenv('JWT_EXPIRES')))
+>>>>>>> Stashed changes
 
     payload = {
         "sub": str(user_data['sub']),

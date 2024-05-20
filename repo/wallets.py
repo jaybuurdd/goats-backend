@@ -29,7 +29,7 @@ class GoatsRepo:
                 )
             else:
                 logger.info("Succes: Goat id was not valid...")
-                return "{msg: 'Goat not found'}"
+                return "Goat not found"
         except Exception as e:
             logger.error(f"Error searching for owner wallet: {e}")
 
