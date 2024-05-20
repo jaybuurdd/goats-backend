@@ -1,12 +1,13 @@
 import os
 import jwt
+import datetime
 import requests
-from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, jwk, JWTError, ExpiredSignatureError
 from jose.utils import base64url_decode
 from typing import Optional
+
 from utils.logging import logger
 
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
@@ -45,7 +46,7 @@ async def decode_google_jwt(token: str):
         raise HTTPException(status_code=400, detail=f"JWT Error: {e}")
 
 def create_jwt_session(user_data, secret_key):
-    expiration = datetime.now(timezone.utc) + timedelta(hours=int(os.getenv('JWT_EXPIRES')))
+    expiration = datetime.datetime.utcnow() + datetime.timedelta(hours=int(os.getenv('JWT_EXPIRES')))
 
     payload = {
         "sub": str(user_data['sub']),
@@ -57,18 +58,13 @@ def create_jwt_session(user_data, secret_key):
 
     return token
 
- 
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
         super(JWTBearer, self).__init__(auto_error=auto_error)
         self.token_cookie = 'jwt_token'
 
     async def __call__(self, request: Request):
-        # Log the request headers and cookies
-        logger.info(f"Request headers: {request.headers}")
-        logger.info(f"Request cookies: {request.cookies}")
-
-        credentials: Optional[str] = request.cookies.get(self.token_cookie)
+        credentials: str = request.cookies.get(self.token_cookie)
         logger.info(f"jwt credentials check: {credentials}")
         if credentials:
             if not self.verify_jwt(credentials):
