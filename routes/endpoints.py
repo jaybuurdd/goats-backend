@@ -13,7 +13,8 @@ def register_endpoints():
     api = FastAPI()
 
     origins = [
-        os.getenv('ORIGIN')
+        'https://goatsdao.com',
+        'https://api-goatsdao.onrender.com'
     ]
 
     api.add_middleware(
@@ -22,7 +23,6 @@ def register_endpoints():
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
-        expose_headers=["Set-Cookie"]
     )
 
     api.include_router(user_router, prefix="/api/v1/user", tags=["users"])
