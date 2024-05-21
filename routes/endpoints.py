@@ -23,6 +23,7 @@ def register_endpoints():
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
+        expose_headers=["Set-Cookie"]
     )
 
     api.include_router(user_router, prefix="/api/v1/user", tags=["users"])
