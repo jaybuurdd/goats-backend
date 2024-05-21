@@ -39,7 +39,8 @@ async def decode_google_jwt(token: str):
 
 def create_jwt_session(user_data, secret_key):
     expiration = datetime.now(timezone.utc) + timedelta(hours=int(os.getenv('JWT_EXPIRES')))
-    logger.info(f"Expiration: {expiration.isoformat()}")
+    logger.info(f"Token creation time (UTC): {datetime.now(timezone.utc)}")
+    logger.info(f"Token expiration time (UTC): {expiration}")
 
     payload = {
         "sub": str(user_data['sub']),
@@ -71,7 +72,7 @@ class JWTBearer(HTTPBearer):
         else:
             logger.error("The provided authorization code is invalid: ")
             raise HTTPException(status_code=401, detail="Invalid authorization code.")
-        
+
     def verify_jwt(self, jwtoken: str) -> bool:
         logger.info("verify_jwt method invoked")
         try:
