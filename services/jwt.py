@@ -65,7 +65,12 @@ class JWTBearer(HTTPBearer):
         self.token_cookie = 'jwt_token'
 
     async def __call__(self, request: Request):
-        credentials: str = request.cookies.get(self.token_cookie)
+        logger.info("JWTBearer __call__ method invoked")
+        # Log the request headers and cookies
+        logger.info(f"Request headers: {request.headers}")
+        logger.info(f"Request cookies: {request.cookies}")
+
+        credentials: Optional[str] = request.cookies.get(self.token_cookie)
         logger.info(f"jwt credentials check: {credentials}")
         if credentials:
             if not self.verify_jwt(credentials):
@@ -77,6 +82,7 @@ class JWTBearer(HTTPBearer):
             raise HTTPException(status_code=401, detail="Invalid authorization code.")
         
     def verify_jwt(self, jwtoken: str) -> bool:
+        logger.info("verify_jwt method invoked")
         try:
             decoded_token = jwt.decode(jwtoken, os.getenv('JWT_SECRET_KEY'), algorithms=["HS256"])
             logger.info(f"Decoded token: {decoded_token}")
