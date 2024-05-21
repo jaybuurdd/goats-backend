@@ -47,7 +47,8 @@ async def decode_google_jwt(token: str):
 
 def create_jwt_session(user_data, secret_key):
     expiration = datetime.datetime.utcnow() + datetime.timedelta(hours=int(os.getenv('JWT_EXPIRES')))
-
+    logger.info(f"Expiration: {expiration}")
+    
     payload = {
         "sub": str(user_data['sub']),
         "exp": expiration
