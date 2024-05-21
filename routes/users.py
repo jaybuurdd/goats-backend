@@ -49,14 +49,14 @@ async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
     logger.info(f"JWT token set: {token}")
 
      # Serialize the user object to JSON
-    user_data = jsonable_encoder(user)
+    # user_data = jsonable_encoder(user)
 
-    return Response(
-        content=json.dumps(user_data),
-        media_type="application/json",
-        status_code=status.HTTP_200_OK
-    )
-    #return user
+    # return Response(
+    #     content=json.dumps(user_data),
+    #     media_type="application/json",
+    #     status_code=status.HTTP_200_OK
+    # )
+    return user
 
 @router.post("/register", dependencies=[Depends(JWTBearer())])
 async def register_user(user : dict, db: Session = Depends(get_db)):
