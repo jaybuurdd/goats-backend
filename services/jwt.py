@@ -1,9 +1,9 @@
 import os
 import jwt
-import datetime
 import requests
+from datetime import datetime, timezone, timedelta
 from fastapi import HTTPException, Request
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPBearer
 from jose import jwt, jwk, JWTError, ExpiredSignatureError
 from jose.utils import base64url_decode
 from typing import Optional
@@ -12,31 +12,23 @@ from utils.logging import logger
 
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 
-"""
-Used to verify google related JWT signature with Google public keys
-"""
 async def get_google_keys():
-    # get google public keys
     discovery = requests.get(GOOGLE_DISCOVERY_URL).json()
     jwks_uri = discovery['jwks_uri']
     jwks = requests.get(jwks_uri).json()
-
     return {jwk["kid"]: jwk for jwk in jwks["keys"]}
 
 async def decode_google_jwt(token: str):
     logger.info("Retrieving Google public keys")
     keys = await get_google_keys()
     try:
-        # Decode and validate JWT token
         header = jwt.get_unverified_header(token)
         key = jwk.construct(keys[header["kid"]])
         message, encoded_sig = token.rsplit('.', 1)
         decoded_sig = base64url_decode(encoded_sig.encode())
-
         if not key.verify(message.encode(), decoded_sig):
             logger.error("Issue verifying users signature")
             raise JWTError("Signature verification failed")
-        
         claims = jwt.get_unverified_claims(token)
         logger.info(f"JWT Decode Complete")
         return claims
@@ -46,9 +38,9 @@ async def decode_google_jwt(token: str):
         raise HTTPException(status_code=400, detail=f"JWT Error: {e}")
 
 def create_jwt_session(user_data, secret_key):
-    expiration = datetime.datetime.utcnow() + datetime.timedelta(hours=int(os.getenv('JWT_EXPIRES')))
-    logger.info(f"Expiration: {expiration}")
-    
+    expiration = datetime.now(timezone.utc) + timedelta(hours=int(os.getenv('JWT_EXPIRES')))
+    logger.info(f"Expiration: {expiration.isoformat()}")
+
     payload = {
         "sub": str(user_data['sub']),
         "exp": expiration
@@ -66,7 +58,6 @@ class JWTBearer(HTTPBearer):
 
     async def __call__(self, request: Request):
         logger.info("JWTBearer __call__ method invoked")
-        # Log the request headers and cookies
         logger.info(f"Request headers: {request.headers}")
         logger.info(f"Request cookies: {request.cookies}")
 
