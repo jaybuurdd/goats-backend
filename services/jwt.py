@@ -78,7 +78,8 @@ class JWTBearer(HTTPBearer):
         
     def verify_jwt(self, jwtoken: str) -> bool:
         try:
-            jwt.decode(jwtoken, os.getenv('JWT_SECRET_KEY'), algorithms=["HS256"])
+            decoded_token = jwt.decode(jwtoken, os.getenv('JWT_SECRET_KEY'), algorithms=["HS256"])
+            logger.info(f"Decoded token: {decoded_token}")
             return True
         except ExpiredSignatureError:
             logger.error("Token has expired")
