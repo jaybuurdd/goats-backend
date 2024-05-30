@@ -41,7 +41,6 @@ async def auth( response: Response, data: dict, db: Session = Depends(get_db)):
         httponly=True, 
         samesite='None', 
         secure=False if os.getenv('APP_MODE', 'DEVELOPMENT') == 'DEVELOPMENT' else True,  #NOTE: secure=False for local testing
-        # domain=".goatsdao.com",
         path='/'
     )
 
