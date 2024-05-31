@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -33,7 +33,7 @@ def register_endpoints():
     
     
     @api.options("/{path:path}")
-    async def option_handler():
+    async def options_handler(path: str, request: Request):
         return JSONResponse(content={"message": "OK"}, headers={
             "Access-Control-Allow-Origin": "https://goatsdao.com",
             "Access-Control-Allow-Methods": "OPTIONS, GET, POST, PUT, DELETE",
