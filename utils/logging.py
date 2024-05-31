@@ -1,6 +1,9 @@
 import os
 import logging
 from logging.handlers import RotatingFileHandler
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from starlette.requests import Request
+from starlette.responses import Response
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +35,14 @@ def config_logging(c):
     logger.addHandler(console_handler)
     logger.setLevel(logging.INFO)
 
-    
-
+class LoggingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        logger.info(f"Incoming Request: {request.method} -- {request.url}")
+        logger.info(f"Request headers: {request.headers}")
+        logger.info(f"Request cookies: {request.cookies}")
+        
+        response = await call_next(request)
+        logger.info(f"Response status: {response.status_code}")
+        logger.info(f"Response headers: {response.headers}")
+        return response
 

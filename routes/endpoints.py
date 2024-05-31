@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from utils.logging import logger
+from utils.logging import logger, LoggingMiddleware
 from routes.users import router as user_router
 from routes.wallets import router as wallet_router
 from routes.server import router as server_router
@@ -17,12 +17,14 @@ def register_endpoints():
         # 'http://localhost:3000'
     ]
 
+    api.add_middleware(LoggingMiddleware)
     api.add_middleware(
         CORSMiddleware,
         allow_origins=origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
+        expose_headers=["Set-Cookie"]
     )
 
     api.include_router(user_router, prefix="/api/v1/user", tags=["users"])
