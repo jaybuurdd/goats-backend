@@ -38,7 +38,8 @@ def register_endpoints():
             "Access-Control-Allow-Origin": "https://goatsdao.com",
             "Access-Control-Allow-Methods": "OPTIONS, GET, POST, PUT, DELETE",
             "Access-Control-Allow-Headers": "Content-Type, Authorization, Cookie, Set-Cookie",
-            "Access-Control-Allow-Credentials": "true"
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Expose-Headers": "Set-Cookie"
         })
     
     logger.info("Ending API endpoints registration")
