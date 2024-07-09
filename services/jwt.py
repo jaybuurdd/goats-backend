@@ -9,13 +9,14 @@ from jose.utils import base64url_decode
 from typing import Optional
 
 from utils.logging import logger
+from security import safe_requests
 
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 
 async def get_google_keys():
     discovery = requests.get(GOOGLE_DISCOVERY_URL).json()
     jwks_uri = discovery['jwks_uri']
-    jwks = requests.get(jwks_uri).json()
+    jwks = safe_requests.get(jwks_uri).json()
     return {jwk["kid"]: jwk for jwk in jwks["keys"]}
 
 async def decode_google_jwt(token: str):
