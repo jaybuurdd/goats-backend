@@ -13,9 +13,9 @@ from utils.logging import logger
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 
 async def get_google_keys():
-    discovery = requests.get(GOOGLE_DISCOVERY_URL).json()
+    discovery = requests.get(GOOGLE_DISCOVERY_URL, timeout=60).json()
     jwks_uri = discovery['jwks_uri']
-    jwks = requests.get(jwks_uri).json()
+    jwks = requests.get(jwks_uri, timeout=60).json()
     return {jwk["kid"]: jwk for jwk in jwks["keys"]}
 
 async def decode_google_jwt(token: str):
